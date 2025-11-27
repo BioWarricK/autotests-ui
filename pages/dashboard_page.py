@@ -1,5 +1,7 @@
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Page
 
+from components.charts.chart_view_component import ChartViewComponent
+from components.dashboard.dashboard_toolbar_view_component import DashboardToolbarViewComponent
 from components.navigation.navbar_component import NavbarComponent
 from components.navigation.sidebar_component import SidebarComponent
 from pages.base_page import BasePage
@@ -10,73 +12,9 @@ class DashboardPage(BasePage):
         super().__init__(page)
 
         self.navbar = NavbarComponent(page)
-
         self.sidebar = SidebarComponent(page)
-
-        self.dashboard_title_text = page.get_by_test_id('dashboard-toolbar-title-text')
-
-        self.students_widget_title = page.get_by_test_id('students-widget-title-text')
-        self.students_chart = page.get_by_test_id('students-bar-chart')
-
-        self.activities_widget_title = page.get_by_test_id('activities-widget-title-text')
-        self.activities_chart = page.get_by_test_id('activities-line-chart')
-
-        self.courses_widget_title = page.get_by_test_id('courses-widget-title-text')
-        self.courses_chart = page.get_by_test_id('courses-pie-chart')
-
-        self.scores_widget_title =  page.get_by_test_id('scores-widget-title-text')
-        self.scores_chart = page.get_by_test_id('scores-scatter-chart')
-
-        # self.dashboard_button = page.get_by_test_id('dashboard-drawer-list-item-button')
-        # self.courses_button = page.get_by_test_id('courses-drawer-list-item-button')
-        # self.logout_button = page.get_by_test_id('logout-drawer-list-item-button')
-        # self.navbar_title_text = page.get_by_test_id('navigation-navbar-app-title-text')
-        # self.navbar_welcome_text = page.get_by_test_id('navigation-navbar-welcome-title-text')
-
-
-    def check_dashboard_title_text(self):
-        """
-        Проверка видимости и наличия текста в заголовке
-        """
-        expect(self.dashboard_title_text).to_be_visible()
-        expect(self.dashboard_title_text).to_have_text('Dashboard')
-
-
-    def check_visible_students_chart(self):
-        """
-         Проверка видимости виджета Students и его заголовка
-        :return:
-        """
-        expect(self.students_widget_title).to_be_visible()
-        expect(self.students_widget_title).to_have_text('Students')
-        expect(self.students_chart).to_be_visible()
-
-
-    def check_visible_activities_chart(self):
-        """
-         Проверка видимости виджета Activities и его заголовка
-        :return:
-        """
-        expect(self.activities_widget_title).to_be_visible()
-        expect(self.activities_widget_title).to_have_text('Activities')
-        expect(self.activities_chart).to_be_visible()
-
-
-    def check_visible_courses_chart(self):
-        """
-         Проверка видимости виджета Courses и его заголовка
-        :return:
-        """
-        expect(self.courses_widget_title).to_be_visible()
-        expect(self.courses_widget_title).to_have_text('Courses')
-        expect(self.courses_chart).to_be_visible()
-
-
-    def check_visible_scores_chart(self):
-        """
-         Проверка видимости виджета Scores и его заголовка
-        :return:
-        """
-        expect(self.scores_widget_title).to_be_visible()
-        expect(self.scores_widget_title).to_have_text('Scores')
-        expect(self.scores_chart).to_be_visible()
+        self.toolbar = DashboardToolbarViewComponent(page)
+        self.students_chart = ChartViewComponent(page, 'students', 'bar')
+        self.activities_chart = ChartViewComponent(page, 'activities', 'line')
+        self.courses_chart = ChartViewComponent(page, 'courses', 'pie')
+        self.scores_chart = ChartViewComponent(page, 'scores', 'scatter')
