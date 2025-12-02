@@ -1,12 +1,14 @@
 from components.base_component import BaseComponent
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Page
+from elements.text import Text
+
 
 class DashboardToolbarViewComponent(BaseComponent):
     def __init__(self, page: Page):
         super().__init__(page)
 
-        self.title_text = page.get_by_test_id('dashboard-toolbar-title-text')
+        self.title_text = Text(page, 'dashboard-toolbar-title-text', 'Title')
 
     def check_visible(self):
-        expect(self.title_text).to_be_visible()
-        expect(self.title_text).to_have_text('Dashboard')
+        self.title_text.check_visible()
+        self.title_text.check_have_text('Dashboard')
