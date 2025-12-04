@@ -1,11 +1,21 @@
+import allure
 import pytest
 
 from pages.dashboard.dashboard_page import DashboardPage
+from tools.allure.epics import AllureEpic
+from tools.allure.features import AllureFeature
+from tools.allure.stories import AllureStory
+from tools.allure.tags import AllureTag
 
 
 @pytest.mark.regression
 @pytest.mark.dashboard
+@allure.tag(AllureTag.DASHBOARD)
+@allure.epic(AllureEpic.LMS)
+@allure.feature(AllureFeature.DASHBOARD)
+@allure.story(AllureStory.DASHBOARD)
 class TestDashboard:
+    @allure.title('Check dashboard page displaying')
     def test_dashboard_displaying(self, dashboard_page_with_state: DashboardPage):
         dashboard_page_with_state.visit('https://nikita-filonov.github.io/qa-automation-engineer-ui-course/#/dashboard')
 
