@@ -1,6 +1,7 @@
 import allure
 import pytest
 from allure_commons.types import Severity
+from pytest_rerunfailures import pytest_terminal_summary
 
 from config import settings
 from pages.authentication.registration_page import RegistrationPage
@@ -22,6 +23,7 @@ from tools.routes import AppRoute
 @allure.suite(AllureFeature.AUTHENTICATION)
 @allure.sub_suite(AllureStory.REGISTRATION)
 class TestRegistration:
+    @pytest.mark.xdist_group(name="authorization_group")
     @allure.title('Registration with correct email, username and password')
     @allure.severity(Severity.CRITICAL)
     def test_successful_registration(self, registration_page: RegistrationPage, dashboard_page: DashboardPage):
