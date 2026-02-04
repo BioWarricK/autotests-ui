@@ -1,0 +1,55 @@
+name: UI tests # Имя workflow
+
+on: # Когда будет запускаться workflow
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs: # Начало джобы, начало шагов
+  run-tests:
+    runs-on: ubuntu-latest  # На какой системе будут запускаться тесты
+
+    steps: # Первый шаг, клонирование репозитория
+      - name: Check out repository
+        uses: actions/checkout@v6  # Готовый action
+
+      - name: Set up Python  # Второй шаг, установка Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies  #Установка пакетного менеджера, зависимостей и playwright
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          playwright install --with-deps
+
+      - name: Run Playwright tests and generate Allure results  # Запуск автотестов и генерация отчета в папку (2 потока)
+        run: |
+          pytest -m regression --alluredir=allure-results --numprocesses 2
+
+      - name: Get Allure history  # Получение истории отчета, если она существует
+        uses: actions/checkout@v6  # Клонирование репозитория
+        if: always()  # Когда - всегда
+        continue-on-error: true  # При ошибке workflow все-равно будет продолжен
+        with:
+          ref: gh-pages  # Ветка для получения истории
+          path: gh-pages  # Путь для сохранения отчетов
+
+      - name: Generates Allure report with history  # Генерация и отображение отчета Allure
+        uses: simple-elf/allure-report-action@v1.13  # Готовый action
+        if: always()  # Всегда
+        with:
+          allure_results: allure-results  # Каталог с результатами тестов
+          allure_history: allure-history  # Каталог для истории отчетов
+
+      - name: Deploy report to Github pages  # Деплой отчета в Github
+        if: always()  # Всегда
+        uses: peaceiris/actions-gh-pages@v4  # Готовый action
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # Токен для аутентификации на Github
+          publish_branch: gh-pages  # Ветка, в которой будет отчет
+          publish_dir: allure-history  # Папка, которая будет в Github
