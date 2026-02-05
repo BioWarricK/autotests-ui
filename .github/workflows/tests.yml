@@ -31,13 +31,40 @@ jobs: # Начало джобы, начало шагов
         run: |
           pytest -m regression --alluredir=allure-results --numprocesses 2
 
-      - name: Get Allure history  # Получение истории отчета, если она существует
-        uses: actions/checkout@v6  # Клонирование репозитория
-        if: always()  # Когда - всегда
-        continue-on-error: true  # При ошибке workflow все-равно будет продолжен
+      - name: Upload artifacts  # Загрузка\сохранение папки с результатами allure-result
+        if: always()
+        uses: actions/upload-artifact@v6
         with:
-          ref: gh-pages  # Ветка для получения истории
-          path: gh-pages  # Путь для сохранения отчетов
+          name: allure-result
+          path: allure-result
+
+
+  publish-report:
+    if: always()
+    needs: [ run-tests ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository  # Клонирование репозитория
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Download Allure results  # Скачивание папки allure-result
+        uses: actions/download-artifact@v5
+        with:
+          name: allure-result
+          path: allure-result
+
+
+      #      - name: Get Allure history  # Получение истории отчета, если она существует
+      #        uses: actions/checkout@v6  # Клонирование репозитория
+      #        if: always()  # Когда - всегда
+      #        continue-on-error: true  # При ошибке workflow все-равно будет продолжен
+      #        with:
+      #          ref: gh-pages  # Ветка для получения истории
+      #          path: gh-pages  # Путь для сохранения отчетов
 
       - name: Generates Allure report with history  # Генерация и отображение отчета Allure
         uses: simple-elf/allure-report-action@v1.13  # Готовый action
