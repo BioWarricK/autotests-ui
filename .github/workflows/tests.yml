@@ -35,8 +35,8 @@ jobs: # Начало джобы, начало шагов
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: allure-result
-          path: allure-result
+          name: allure-results
+          path: allure-results
 
 
   publish-report:
@@ -54,8 +54,8 @@ jobs: # Начало джобы, начало шагов
       - name: Download Allure results  # Скачивание папки allure-result
         uses: actions/download-artifact@v5
         with:
-          name: allure-result
-          path: allure-result
+          name: allure-results
+          path: allure-results
 
 
       #      - name: Get Allure history  # Получение истории отчета, если она существует
